@@ -5,9 +5,9 @@ classdef APCProp < handle
         web_options = weboptions('ContentType','text');
     end
     
-    properties (Access=private)
+    properties %(Access=private)
         raw_web;
-        data;
+        data; %3D data structure: rpm, v or Thrust
     end
     
     methods
@@ -17,6 +17,24 @@ classdef APCProp < handle
             end
             
             obj.raw_web = webread([APCProp.base_url, '/', name, '.dat'],APCProp.web_options);
+            
+            rpm_sets = regexp(obj.raw_web, "PROP RPM.*?\s{300}", 'match');
+            for i=1:numel(rpm_sets)
+                rpm_temp = regexp(rpm_sets{i}, "RPM =\s*(\d*)", 'tokens', 'dotexceptnewline');
+               
+                rpm(i) = str2double(rpm_temp{1});
+            end
+            
+        end
+        
+        function out=thrust(obj, vel, rpm)
+            %TODO use map
+           out = 0; 
+        end
+        
+        function out=torque(obj, vel, rpm)
+           %TODO use mao
+           out = 0;
         end
         
         
